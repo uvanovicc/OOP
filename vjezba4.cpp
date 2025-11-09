@@ -111,16 +111,40 @@ int main() {
 	return 0;
 }
 
-//4.
-string word_to_pig_latin(const std::string& word) {
-	string samoglasnici = " aeiouAEIOU";
-	if (samoglasnici.find(word[0])) {
-
-	}
+//4
+string word_to_pig_latin(const string& word) {
+    if (word.empty()) return "";
+    string samoglasnici = "aeiouAEIOU";
+    if (samoglasnici.find(word[0]) != string::npos)
+        return word + "hay";
+    else
+        return word.substr(1) + word[0] + "ay";
 }
+
 int main() {
-
-	system("pause");
-	return 0;
+    cout << word_to_pig_latin("apple") << endl;
+    cout << word_to_pig_latin("hello") << endl;
+    cout << word_to_pig_latin("OpenAI") << endl;
+    return 0;
 }
+
 */
+//5
+void reverse_strings(vector<string>& words) {
+    for (auto& w : words)
+        reverse(w.begin(), w.end());
+}
+
+int main() {
+    vector<string> words = {"hello", "world", "c++", "split"};
+    cout << "Prije: ";
+    for (auto& w : words) cout << w << " ";
+    cout << endl;
+
+    reverse_strings(words);
+
+    cout << "Nakon: ";
+    for (auto& w : words) cout << w << " ";
+    cout << endl;
+    return 0;
+}
