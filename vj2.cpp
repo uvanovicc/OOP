@@ -1,4 +1,7 @@
 #include <iostream>
+#include <iomanip>
+#include <cstdlib>
+#include <ctime>  
 using namespace std;
 /*
 // 1.
@@ -106,3 +109,133 @@ int main() {
 	return 0;
 }
 */
+//3.
+double** alociraj_matricu(int m, int n) {
+    double** mat = new double*[m];
+    for (int i = 0; i < m; i++)
+        mat[i] = new double[n];
+    return mat;
+}
+
+void dealociraj_matricu(double** mat, int m) {
+    for (int i = 0; i < m; i++)
+        delete[] mat[i];
+    delete[] mat;
+}
+
+void unos_matrice(double** mat, int m, int n) {
+    cout << "Unesi elemente matrice (" << m << "x" << n << "):" << endl;
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            cout << "mat[" << i << "][" << j << "] = ";
+            cin >> mat[i][j];
+        }
+    }
+}
+
+void generiraj_matricu(double** mat, int m, int n, double a, double b) {
+    srand((unsigned)time(nullptr));
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            double randomValue = a + static_cast<double>(rand()) / RAND_MAX * (b - a);
+            mat[i][j] = randomValue;
+        }
+    }
+}
+
+void ispisi_matricu(double** mat, int m, int n) {
+    cout << fixed << setprecision(4);
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            cout << setw(10) << mat[i][j];
+        }
+        cout << endl;
+    }
+}
+
+double** zbroji_matrice(double** A, double** B, int m, int n) {
+    double** C = alociraj_matricu(m, n);
+    for (int i = 0; i < m; i++)
+        for (int j = 0; j < n; j++)
+            C[i][j] = A[i][j] + B[i][j];
+    return C;
+}
+
+double** oduzmi_matrice(double** A, double** B, int m, int n) {
+    double** C = alociraj_matricu(m, n);
+    for (int i = 0; i < m; i++)
+        for (int j = 0; j < n; j++)
+            C[i][j] = A[i][j] - B[i][j];
+    return C;
+}
+
+double** pomnozi_matrice(double** A, int m1, int n1, double** B, int m2, int n2) {
+    if (n1 != m2) {
+        cout << "Mnozenje nije moguce! Broj stupaca prve matrice mora biti jednak broju redaka druge." << endl;
+        return nullptr;
+    }
+
+    double** C = alociraj_matricu(m1, n2);
+    for (int i = 0; i < m1; i++) {
+        for (int j = 0; j < n2; j++) {
+            C[i][j] = 0;
+            for (int k = 0; k < n1; k++)
+                C[i][j] += A[i][k] * B[k][j];
+        }
+    }
+    return C;
+}
+
+double** transponiraj_matricu(double** A, int m, int n) {
+    double** T = alociraj_matricu(n, m);
+    for (int i = 0; i < m; i++)
+        for (int j = 0; j < n; j++)
+            T[j][i] = A[i][j];
+    return T;
+}
+
+int main() {
+    int m, n;
+    cout << "Unesi broj redaka i stupaca matrice: ";
+    cin >> m >> n;
+
+    double** A = alociraj_matricu(m, n);
+    double** B = alociraj_matricu(m, n);
+
+    cout << "\n--- Generiranje matrica A i B ---" << endl;
+    generiraj_matricu(A, m, n, 1.0, 10.0);
+    generiraj_matricu(B, m, n, 1.0, 10.0);
+
+    cout << "\nMatrica A:" << endl;
+    ispisi_matricu(A, m, n);
+    cout << "\nMatrica B:" << endl;
+    ispisi_matricu(B, m, n);
+
+    cout << "\n--- Zbroj matrica (A + B) ---" << endl;
+    double** C = zbroji_matrice(A, B, m, n);
+    ispisi_matricu(C, m, n);
+
+    cout << "\n--- Razlika matrica (A - B) ---" << endl;
+    double** D = oduzmi_matrice(A, B, m, n);
+    ispisi_matricu(D, m, n);
+
+    cout << "\n--- Transponirana matrica A ---" << endl;
+    double** T = transponiraj_matricu(A, m, n);
+    ispisi_matricu(T, n, m);
+
+    if (n == m) {
+        cout << "\n--- Umnozak matrica (A * B) ---" << endl;
+        double** M = pomnozi_matrice(A, m, n, B, m, n);
+        if (M) ispisi_matricu(M, m, n);
+        dealociraj_matricu(M, m);
+    }
+
+    dealociraj_matricu(A, m);
+    dealociraj_matricu(B, m);
+    dealociraj_matricu(C, m);
+    dealociraj_matricu(D, m);
+    dealociraj_matricu(T, n);
+
+    system("pause");
+    return 0;
+}
